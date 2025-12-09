@@ -33,13 +33,11 @@
             background-color: var(--bg-color);
             color: var(--text-main);
             overflow-x: hidden;
-            /* 啟用吸附捲動 */
             scroll-snap-type: y mandatory;
             height: 100vh;
             overflow-y: scroll;
         }
 
-        /* 隱藏捲軸但保留功能 */
         body::-webkit-scrollbar {
             width: 0px;
             background: transparent;
@@ -57,7 +55,6 @@
             padding: 2rem;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             background: radial-gradient(circle at center, #1f1f25 0%, #0f0f12 70%);
-            /* 防止內容溢出導致破圖，允許內容過長時 slide 自適應 */
             overflow: hidden; 
         }
 
@@ -68,11 +65,17 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
+            /* 關鍵設定：讓 flex 容器內的項目水平置中 */
+            align-items: center; 
         }
 
-        h1 { font-size: clamp(2.5rem, 5vw, 3.5rem); font-weight: 900; margin-bottom: 0.5rem; letter-spacing: -1px; }
+        /* 內容靠左對齊的容器 (用於內頁) */
+        .container.left-align {
+            align-items: stretch; 
+        }
+
+        h1 { font-size: clamp(2.5rem, 5vw, 3.5rem); font-weight: 900; margin-bottom: 0.5rem; letter-spacing: -1px; text-align: center; }
         
-        /* 修正標題破圖：調整 clamp 最小值，增加 line-height 與 word-break */
         h2 { 
             font-size: clamp(1.5rem, 4vw, 2.5rem); 
             font-weight: 700; 
@@ -81,7 +84,9 @@
             border-left: 5px solid var(--accent-gold); 
             padding-left: 20px;
             line-height: 1.3;
-            word-break: break-word; /* 強制長字換行 */
+            word-break: break-word;
+            align-self: flex-start; /* 標題維持靠左 */
+            width: 100%;
         }
         
         p { font-size: clamp(1rem, 2vw, 1.2rem); line-height: 1.6; color: var(--text-muted); }
@@ -90,11 +95,24 @@
         .text-green { color: var(--accent-green); }
         .text-red { color: var(--accent-red); }
         .text-blue { color: var(--accent-blue); }
+        .text-gold { color: var(--accent-gold); }
+
+        /* --- Logo 專用樣式 (強制置中) --- */
+        .slide-logo {
+            display: block;         /* 確保是區塊元素 */
+            margin-left: auto;      /* 左邊距自動 */
+            margin-right: auto;     /* 右邊距自動 */
+            margin-bottom: 30px;
+            max-width: 250px;       /* 限制最大寬度 */
+            width: 40vw;            /* 響應式寬度 */
+            height: auto;
+            object-fit: contain;    /* 保持比例 */
+        }
 
         /* --- 卡片與佈局 --- */
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
-        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
-        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; width: 100%; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; width: 100%; }
+        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; width: 100%; }
 
         .card {
             background: var(--card-bg);
@@ -104,7 +122,7 @@
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             position: relative;
             overflow: hidden;
-            height: 100%; /* 確保網格內高度一致 */
+            height: 100%;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -115,7 +133,6 @@
             border-color: rgba(255, 215, 0, 0.3);
         }
 
-        /* 連結卡片樣式 */
         a.card-link {
             text-decoration: none;
             color: inherit;
@@ -123,15 +140,6 @@
             height: 100%;
         }
 
-        .icon-box {
-            font-size: 3rem;
-            margin-bottom: 20px;
-            color: var(--accent-gold);
-        }
-
-        /* --- 特殊組件 --- */
-        
-        /* 頁碼 */
         .slide-number {
             position: absolute;
             bottom: 30px;
@@ -141,7 +149,6 @@
             font-weight: bold;
         }
 
-        /* 金色流光文字 */
         .gold-gradient-text {
             background: linear-gradient(to right, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
             -webkit-background-clip: text;
@@ -150,7 +157,7 @@
             text-shadow: 0px 0px 30px rgba(255, 215, 0, 0.3);
         }
 
-        /* 組織圖 CSS 繪製 */
+        /* 組織圖 CSS */
         .org-chart {
             display: flex;
             flex-direction: column;
@@ -172,34 +179,18 @@
         }
         .node.main { border-color: var(--accent-gold); color: var(--accent-gold); width: 80px; height: 80px; font-size: 1.2rem; background: rgba(255,215,0,0.1); }
         .node.sub { border-color: var(--accent-blue); color: var(--accent-blue); }
-        .lines {
-            display: flex;
-            gap: 100px;
-            position: relative;
-        }
-        /* 連線 */
+        .lines { display: flex; gap: 100px; position: relative; }
         .connector {
             position: absolute;
-            top: -20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 140px;
-            height: 20px;
-            border-top: 2px solid #555;
-            border-left: 2px solid #555;
-            border-right: 2px solid #555;
+            top: -20px; left: 50%; transform: translateX(-50%);
+            width: 140px; height: 20px;
+            border-top: 2px solid #555; border-left: 2px solid #555; border-right: 2px solid #555;
             z-index: 1;
         }
 
-        /* 箭頭指示 */
         .scroll-hint {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            animation: bounce 2s infinite;
-            opacity: 0.5;
-            font-size: 2rem;
+            position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+            animation: bounce 2s infinite; opacity: 0.5; font-size: 2rem;
         }
 
         @keyframes bounce {
@@ -208,26 +199,13 @@
             60% {transform: translateY(-5px) translateX(-50%);}
         }
 
-        /* 響應式 */
         @media (max-width: 768px) {
             .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; gap: 20px; }
             .lines { gap: 40px; }
             .connector { width: 80px; }
-            
-            /* 手機版調整卡片間距與高度，防止內容溢出 */
             .card { padding: 20px; }
-            section.slide { 
-                height: auto; 
-                min-height: 100vh; /* 內容過多時允許變長 */
-                padding: 4rem 1rem;
-                overflow: visible; /* 修正：手機版允許 overflow 以免切字 */
-            }
-            .container { 
-                justify-content: flex-start; 
-                height: auto; /* 容器高度自適應 */
-            }
-            
-            /* 第六頁特定調整 */
+            section.slide { height: auto; min-height: 100vh; padding: 4rem 1rem; overflow: visible; }
+            .container { height: auto; }
             .p6-title { margin-top: 30px; }
         }
     </style>
@@ -236,10 +214,13 @@
 
     <!-- Slide 1: 封面 -->
     <section class="slide">
-        <div class="container" style="text-align: center; justify-content: center; height: 90%;">
-            <div style="font-size: clamp(3rem, 10vw, 5rem); margin-bottom: 20px;">🪙</div>
+        <!-- 確保 align-items: center 存在 -->
+        <div class="container" style="text-align: center; justify-content: center; align-items: center; height: 90%;">
+            <!-- 第一個 Logo -->
+            <img src="quspire.jpg" alt="Logo" class="slide-logo">
+            
             <h1 class="gold-gradient-text">量子階塔（Quantum Spire）</h1>
-            <p style="font-size: clamp(1rem, 3vw, 1.5rem); letter-spacing: 2px; margin-top: 10px;">從零開始到S級攻頂計畫</p>
+            <p style="font-size: clamp(1rem, 3vw, 1.5rem); letter-spacing: 2px; margin-top: 10px; text-align: center;">從零開始到S級攻頂計畫</p>
             
             <div style="margin-top: 50px; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
                 <div style="border:1px solid #333; padding: 10px 20px; border-radius: 50px; background: rgba(255,255,255,0.05); white-space: nowrap;">
@@ -259,7 +240,7 @@
 
     <!-- Slide 2: 遊戲世界觀 -->
     <section class="slide">
-        <div class="container">
+        <div class="container left-align">
             <h2><i class="fas fa-gamepad"></i> 遊戲世界觀介紹</h2>
             <div class="grid-2">
                 <div>
@@ -285,7 +266,7 @@
 
     <!-- Slide 3: 核心規則與獎金 -->
     <section class="slide">
-        <div class="container">
+        <div class="container left-align">
             <h2><i class="fas fa-book-open"></i> 核心規則與獎金制度</h2>
             <div class="grid-4" style="text-align: center;">
                 <div class="card">
@@ -322,14 +303,13 @@
                 </div>
             </div>
             
-            <!-- 將 GAME DEMO 區塊改為超連結 -->
             <a href="https://game-calculator-steel.vercel.app/" target="_blank" style="text-decoration: none; color: inherit; display: block; margin-top: 30px;">
                 <div class="card" style="display: flex; flex-direction: row; align-items: center; justify-content: space-between; height: auto; cursor: pointer;">
                     <div>
                         <h3 class="text-green"><i class="fas fa-sitemap"></i> 旗下代數獎金 (M2)</h3>
                         <p style="font-size: 1rem; margin-top: 5px;">組織深度收益，第 2 ~ 5 代，每代皆可領取 <span class="highlight">3%</span></p>
                     </div>
-                    <div style="font-size: clamp(1.5rem, 4vw, 2rem); font-weight: bold; text-align: right;" class="text-green">GAME DEMO</div>
+                    <div style="font-size: clamp(1.5rem, 4vw, 2rem); font-weight: bold; text-align: right;" class="text-green">點擊開始</div>
                 </div>
             </a>
         </div>
@@ -338,7 +318,7 @@
 
     <!-- Slide 4: 小資回本 -->
     <section class="slide">
-        <div class="container">
+        <div class="container left-align">
             <h2><i class="fas fa-bolt"></i> 策略一：小資槓桿流 (極速回本)</h2>
             <div class="grid-2">
                 <div>
@@ -361,7 +341,6 @@
                     </div>
                 </div>
                 
-                <!-- 視覺化圖表 -->
                 <div class="card org-chart" style="padding: 40px; height: auto;">
                     <div class="node main">Lv1</div>
                     <div class="connector"></div>
@@ -386,7 +365,7 @@
 
     <!-- Slide 5: 黃金三角 -->
     <section class="slide">
-        <div class="container">
+        <div class="container left-align">
             <h2><i class="fas fa-shapes"></i> 策略二：黃金三角戰略</h2>
             <div class="grid-2">
                 <div class="card org-chart" style="padding: 40px; justify-content: center; height: auto;">
@@ -426,15 +405,13 @@
         <div class="slide-number">量子階塔（Quantum Spire）</div>
     </section>
 
-    <!-- Slide 6: S級攻頂 (修正破圖) -->
+    <!-- Slide 6: S級攻頂 -->
     <section class="slide">
-        <div class="container">
-            <!-- 標題加入 word-break 防止手機版過長破圖 -->
+        <div class="container left-align">
             <h2><i class="fas fa-crown"></i> 策略三：頂級雙獵人攻頂 (S級)</h2>
-            <p style="text-align: center; margin-bottom: 30px;">全 A級 (Lv 31) 入場，三帳號同時封頂的最暴力解法。</p>
+            <p style="text-align: center; margin-bottom: 30px; width: 100%;">全 A級 (Lv 31) 入場，三帳號同時封頂的最暴力解法。</p>
             
             <div class="grid-3">
-                <!-- 左路 -->
                 <div class="card" style="border-top: 5px solid var(--accent-blue);">
                     <div style="text-align: center;">
                         <h3>B 帳號</h3>
@@ -450,7 +427,6 @@
                     </div>
                 </div>
 
-                <!-- 中路 (主) -->
                 <div class="card" style="transform: scale(1.1); border: 2px solid var(--accent-gold); box-shadow: 0 0 20px rgba(255,215,0,0.2); z-index: 10;">
                     <div style="text-align: center;">
                         <i class="fas fa-star text-gold" style="font-size: 2rem;"></i>
@@ -468,7 +444,6 @@
                     </div>
                 </div>
 
-                <!-- 右路 -->
                 <div class="card" style="border-top: 5px solid var(--accent-blue);">
                     <div style="text-align: center;">
                         <h3>C 帳號</h3>
@@ -485,7 +460,7 @@
                 </div>
             </div>
 
-            <div class="p6-title" style="text-align: center; margin-top: 40px;">
+            <div class="p6-title" style="text-align: center; margin-top: 40px; width: 100%;">
                 <h3 class="gold-gradient-text" style="font-size: clamp(1.5rem, 4vw, 2.5rem); word-break: break-word; line-height: 1.3;">總收益 > 40,000 B (約 120萬台幣)</h3>
                 <p style="margin-top: 10px;">只需尋找 44 位事業夥伴，即可達成三帳號財富自由。</p>
             </div>
@@ -495,14 +470,17 @@
 
     <!-- Slide 7: 結語 -->
     <section class="slide">
-        <div class="container" style="text-align: center;">
-            <i class="fas fa-rocket" style="font-size: clamp(3rem, 8vw, 5rem); color: var(--accent-red); margin-bottom: 30px;"></i>
+        <!-- 第七頁：確保 container 具有 align-items: center 屬性 -->
+        <div class="container" style="text-align: center; justify-content: center; align-items: center;">
+            
+            <!-- 將火箭替換為 Logo，並使用 .slide-logo 置中 -->
+            <img src="quspire.jpg" alt="Logo" class="slide-logo">
+            
             <h1>選擇您的戰場</h1>
-            <p style="margin-bottom: 50px;">從 3,000 元的小資嘗試，到 120 萬的頂級佈局，路徑已為您鋪好。</p>
+            <p style="margin-bottom: 50px; text-align: center;">從 3,000 元的小資嘗試，到 120 萬的頂級佈局，路徑已為您鋪好。</p>
 
             <div class="grid-2" style="max-width: 800px; margin: 0 auto;">
-                <!-- 連結 1 -->
-                <a href="https://store.warrenslove.co/h5/#/pages/login/reg/reg/" target="_blank" class="card-link">
+                <a href="https://lin.ee/HfBFJVS" target="_blank" class="card-link">
                     <div class="card" style="cursor: pointer;">
                         <h3>我是新手</h3>
                         <p>Lv 1 入場，推薦 2 人回本</p>
@@ -510,8 +488,7 @@
                     </div>
                 </a>
                 
-                <!-- 連結 2 -->
-                <a href="https://store.warrenslove.co/h5/#/pages/login/reg/reg/" target="_blank" class="card-link">
+                <a href="https://lin.ee/HfBFJVS" target="_blank" class="card-link">
                     <div class="card" style="cursor: pointer; border: 1px solid var(--accent-gold);">
                         <h3 class="text-gold">我是領袖</h3>
                         <p>金三角 Lv 31 佈局，直攻 S級</p>
